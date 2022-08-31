@@ -5,14 +5,13 @@ using System.Collections.Generic;
 namespace AutomatedTestSystem
 {
     // TODO V: Decide if I should throw away a dictionary? It is hard to get it to work with generics
-    public class DictionaryByType : IEnumerable<KeyValuePair<TypeClass, object>>
+    public class DictionaryByType : IEnumerable<KeyValuePair<Type, object>>
     {
-        private readonly Dictionary<TypeClass, object> innerDictionary = new Dictionary<TypeClass, object>();
+        private readonly Dictionary<Type, object> innerDictionary = new Dictionary<Type, object>();
 
         public void Add<T>(Type type, T value)
         {
-            TypeClass myClass = new TypeClass(type);
-            innerDictionary[myClass] = value;
+            innerDictionary[type] = value;
         }
 
         // public bool Remove<T>()
@@ -22,20 +21,20 @@ namespace AutomatedTestSystem
         //     return result;
         // }
 
-        public bool ContainsKey(TypeClass typeClass)
+        public bool ContainsKey(Type type)
         {
-            bool result = innerDictionary.ContainsKey(typeClass);
+            bool result = innerDictionary.ContainsKey(type);
             return result;
         }
 
-        public object Get(TypeClass typeClass)
+        public object Get(Type type)
         {
-            object retrievedValue = innerDictionary[typeClass];
-            object result = Convert.ChangeType(retrievedValue, typeClass.type);
+            object retrievedValue = innerDictionary[type];
+            object result = Convert.ChangeType(retrievedValue, type);
             return result;
         }
 
-        public IEnumerator<KeyValuePair<TypeClass, object>> GetEnumerator()
+        public IEnumerator<KeyValuePair<Type, object>> GetEnumerator()
         {
             return innerDictionary.GetEnumerator();
         }

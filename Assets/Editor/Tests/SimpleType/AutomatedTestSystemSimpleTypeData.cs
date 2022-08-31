@@ -11,8 +11,8 @@ namespace AutomatedTestSystemTests
         {
             List<TestCaseData> data = new List<TestCaseData>();
             FactorySimpleType factory = new FactorySimpleType();
-            IEnumerable<TypeClass> allTypes = factory.GetAllImplementedTypes();
-            foreach (TypeClass type in allTypes)
+            IEnumerable<Type> allTypes = factory.GetAllImplementedTypes();
+            foreach (Type type in allTypes)
             {
                 TestCaseData[] value = Generic(type, factory);
                 data.AddRange(value);
@@ -22,7 +22,7 @@ namespace AutomatedTestSystemTests
             return result;
         }
 
-        private static TestCaseData[] Generic(TypeClass type, FactoryData factory)
+        private static TestCaseData[] Generic(Type type, FactoryData factory)
         {
             if (factory.IsTypeImplemented(type))
             {

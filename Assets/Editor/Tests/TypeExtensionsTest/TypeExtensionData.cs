@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using AutomatedTestSystem;
 using NUnit.Framework;
+using Type = System.Type;
 
 namespace AutomatedTestSystemTests
 {

@@ -28,10 +28,10 @@ namespace AutomatedTestSystem
             implementedTypes.Add(typeof(TimeSpan[]), new TimeSpan[] { TimeSpan.MinValue, TimeSpan.Zero, new TimeSpan(), TimeSpan.MaxValue });
         }
 
-        public T[] GetValue<T>(TypeClass typeClass)
+        public T[] GetValue<T>(Type type)
         {
             List<T> sorted = new List<T>();
-            object value = implementedTypes.Get(typeClass);
+            object value = implementedTypes.Get(type);
             if (value is IEnumerable<T> enumerable)
             {
                 sorted.AddRange(enumerable);
@@ -41,19 +41,19 @@ namespace AutomatedTestSystem
             return result;
         }
 
-        public bool IsTypeImplemented(TypeClass typeClass)
+        public bool IsTypeImplemented(Type type)
         {
-            bool result = implementedTypes.ContainsKey(typeClass);
+            bool result = implementedTypes.ContainsKey(type);
             return result;
         }
 
-        public IEnumerable<TypeClass> GetAllImplementedTypes()
+        public IEnumerable<Type> GetAllImplementedTypes()
         {
-            IEnumerator<KeyValuePair<TypeClass, object>> enumerator = implementedTypes.GetEnumerator();
-            List<TypeClass> result = new List<TypeClass>();
+            IEnumerator<KeyValuePair<Type, object>> enumerator = implementedTypes.GetEnumerator();
+            List<Type> result = new List<Type>();
             while (enumerator.MoveNext())
             {
-                TypeClass key = enumerator.Current.Key;
+                Type key = enumerator.Current.Key;
                 result.Add(key);
             }
             

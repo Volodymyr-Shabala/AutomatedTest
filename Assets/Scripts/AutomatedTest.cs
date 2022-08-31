@@ -9,7 +9,7 @@ namespace AutomatedTestSystem
     {
         public static IList<T> Populate<T>()
         {
-            Type type = typeof(T);
+            System.Type type = typeof(T);
             object objectToPopulate = CreateObject<T>();
             if (type.GetInterface("ICollection") != null)
             {
@@ -75,7 +75,7 @@ namespace AutomatedTestSystem
         private static bool GetElementOfType<T>(ref object objectToPopulate, int index)
         {
             FieldInfo[] fieldInfos = typeof(FactorySimpleType).GetFields();
-            Type type = typeof(T).MakeArrayType();
+            System.Type type = typeof(T).MakeArrayType();
             foreach (FieldInfo fieldInfo in fieldInfos)
             {
                 if (type == fieldInfo.FieldType)
@@ -93,7 +93,7 @@ namespace AutomatedTestSystem
         private static IList<T> PopulateSimpleType<T>(object objectToPopulate)
         {
             FieldInfo[] fieldInfos = typeof(FactorySimpleType).GetFields();
-            Type type = typeof(T).MakeArrayType();
+            System.Type type = typeof(T).MakeArrayType();
             foreach (FieldInfo fieldInfo in fieldInfos)
             {
                 if (fieldInfo.FieldType == type && fieldInfo.FieldType.IsArray)

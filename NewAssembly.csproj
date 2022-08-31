@@ -56,7 +56,6 @@
      <Compile Include="Assets\Scripts\Factory\FactoryBadData.cs" />
      <Compile Include="Assets\Scripts\Factory\FactoryData.cs" />
      <Compile Include="Assets\Scripts\Factory\FactorySimpleType.cs" />
-     <Compile Include="Assets\Scripts\TypeClass.cs" />
  <Reference Include="UnityEditor.UI">
  <HintPath>/Users/volodymyr/Unity projects/Automated test/Library/ScriptAssemblies/UnityEditor.UI.dll</HintPath>
  </Reference>
