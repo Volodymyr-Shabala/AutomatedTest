@@ -1,0 +1,11 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=8fa8ab39_002D81e5_002D4d63_002D80d3_002Db86f0f041b76/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="ExtensionTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+  &lt;TestAncestor&gt;
+    &lt;TestId&gt;NUnit3x::CDB7302E-2AA5-9448-7E5E-17B0353DD6DD::.NETFramework,Version=v4.7.1::Tests.TypeExtensionTest.ExtensionTest&lt;/TestId&gt;
+  &lt;/TestAncestor&gt;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=abbead4a_002D65ac_002D47a4_002Da328_002D89c669302cef/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="SByteTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+  &lt;TestAncestor&gt;
+    &lt;TestId&gt;NUnit3x::2E30B7CD-A52A-4894-7E5E-17B0353DD6DD::.NETFramework,Version=v4.7.1::AutomatedTestSystemTests.AutomatedTestSystemSimpleTypeTest.SByteTest&lt;/TestId&gt;
+  &lt;/TestAncestor&gt;
+&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

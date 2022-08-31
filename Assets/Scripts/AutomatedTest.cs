@@ -2,116 +2,120 @@
 using System.Collections.Generic;
 using System.Reflection;
 using AutomatedTestSystemTests;
-using UnityEngine;
 
 namespace AutomatedTestSystem
 {
     public class AutomatedTest
     {
-        public static T Populate<T>()
+        public static IList<T> Populate<T>()
         {
-            if (typeof(T).IsSimpleType())
+            Type type = typeof(T);
+            object objectToPopulate = CreateObject<T>();
+            if (type.GetInterface("ICollection") != null)
             {
-                return PopulateSimpleTypeField<T>();
+                return PopulateCollection<T>(ref objectToPopulate);
             }
-
-            // object returnObject = objectType;
-            // object returnObject = new object();
-            // return Populate(returnObject, typeof(T));
-            return default;
-        }
-
-        private static T PopulateSimpleTypeField<T>()
-        {
-            string stringValue = FactoryPrimitiveType.GetStringValueAt(3);
-            return stringValue is T value ? value : default;
-
-            if (typeof(T) == typeof(string))
-            {
-                
-            }
-        }
-
-        private static object Populate(object objectToPopulate, Type type)
-        {
+            
             if (type.IsSimpleType())
             {
-                AssignField(objectToPopulate, type.GetProperties()[0], type);
+                return PopulateSimpleType<T>(objectToPopulate);
             }
+            
+            return new List<T>();
 
-            return objectToPopulate;
+            // Go through an array one by one
+            // int index = 0;
+            // bool shouldContinue = true;
+            // while (shouldContinue)
+            // {
+            //     shouldContinue = GetElementOfType<T>(ref objectToPopulate, index);
+            //     listToPopulate.Add(objectToPopulate);
+            //     index++;
+            // }
+            //
+            // return listToPopulate;
+        }
+        
+        private static IList<T> PopulateCollection<T>(ref object objectToPopulate)
+        {
+            IList<T> collection = new List<T>();
 
-            PropertyInfo[] fieldInfos = type.GetProperties();
-            foreach (PropertyInfo propertyInfo in fieldInfos)
+            var underLyingType = typeof(T);
+            var baseType = typeof(T).BaseType;
+            if (typeof(T).IsGenericType)
             {
-                Type fieldType = propertyInfo.PropertyType;
-                if (IsTypeSupported(fieldType))
-                {
-                    objectToPopulate = AssignField(objectToPopulate, propertyInfo, fieldType);
-                    Debug.Log("Supported type");
-                }
-                else if (fieldType.IsPrimitive)
-                {
-                    Debug.Log("Primitive");
-                }
-                else if (fieldType == typeof(List<>) && fieldType.IsGenericType)
-                {
-                    Debug.LogError("List encountered");
-                }
-                else
-                {
-                    object fieldObject = Activator.CreateInstance(fieldType);
-                    propertyInfo.SetValue(objectToPopulate, Populate(fieldObject, fieldType));
-                }
+                var generic = typeof(T).GetGenericTypeDefinition();
             }
 
-            return objectToPopulate;
+            var declaringType = typeof(T).DeclaringType;
+            var t = typeof(T).GetGenericArguments(); // Works for generic type like List, Dictionary. Can loop them
+            var underLyingSystemType = typeof(T).UnderlyingSystemType;
+            var underLyingSystemTypeUnderlying = typeof(T).UnderlyingSystemType.UnderlyingSystemType;
+
+            return collection;
         }
 
-        private static object AssignField(object testObject, PropertyInfo propertyInfo, Type type)
+        private static object CreateObject<T>()
         {
-            if (type == typeof(int))
+            if (typeof(T) == typeof(string))
             {
-                propertyInfo.SetValue(testObject, FactoryPrimitiveType.IntValues[2]);
+                return typeof(string);
             }
 
-            if (type == typeof(long))
+            if (typeof(T).BaseType == typeof(Array))
             {
-                propertyInfo.SetValue(testObject, FactoryPrimitiveType.LongValues[2]);
+                return typeof(Array);
             }
 
-            if (type == typeof(string))
-            {
-                propertyInfo.SetValue(testObject, FactoryPrimitiveType.StringValues[2]);
-            }
-
-            if (type == typeof(char))
-            {
-                propertyInfo.SetValue(testObject, FactoryPrimitiveType.CharValues[2]);
-            }
-
-            return testObject;
+            return Activator.CreateInstance<T>();
         }
 
-        // I think this can be removed
-        private static bool IsTypeSupported(Type type)
+    #region SimpleType
+
+        private static bool GetElementOfType<T>(ref object objectToPopulate, int index)
         {
-            if (type == typeof(int))
+            FieldInfo[] fieldInfos = typeof(FactorySimpleType).GetFields();
+            Type type = typeof(T).MakeArrayType();
+            foreach (FieldInfo fieldInfo in fieldInfos)
             {
-                return true;
-            }
-
-            if (type == typeof(long))
-            {
-                return true;
-            }
-
-            if (type == typeof(string))
-            {
-                return true;
+                if (type == fieldInfo.FieldType)
+                {
+                    T[] objectArray = (T[]) fieldInfo.GetValue(objectToPopulate);
+                    objectToPopulate = objectArray[index];
+                    return objectArray.Length - 1 > index;
+                }
             }
 
             return false;
         }
+
+        // V: This version should be faster if I get only a simple type to populate
+        private static IList<T> PopulateSimpleType<T>(object objectToPopulate)
+        {
+            FieldInfo[] fieldInfos = typeof(FactorySimpleType).GetFields();
+            Type type = typeof(T).MakeArrayType();
+            foreach (FieldInfo fieldInfo in fieldInfos)
+            {
+                if (fieldInfo.FieldType == type && fieldInfo.FieldType.IsArray)
+                {
+                    return (IList<T>) fieldInfo.GetValue(objectToPopulate);
+                }
+            }
+
+            return default;
+        }
+
+    #endregion
+
+        /*
+         * Activator for strings:
+         * var oType = oVal.GetType();
+         * if (oType == typeof(string)) return oVal as string;
+         * else return Activator.CreateInstance(oType, oVal);
+         *
+         * For int:
+         * TypeConverter tc = TypeDescriptor.GetConverter(someType);
+         * object obj = tc.ConvertFromString(s);
+         */
     }
 }
