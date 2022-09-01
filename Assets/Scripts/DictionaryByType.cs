@@ -4,12 +4,11 @@ using System.Collections.Generic;
 
 namespace AutomatedTestSystem
 {
-    // TODO V: Decide if I should throw away a dictionary? It is hard to get it to work with generics
     public class DictionaryByType : IEnumerable<KeyValuePair<Type, object>>
     {
         private readonly Dictionary<Type, object> innerDictionary = new Dictionary<Type, object>();
 
-        public void Add<T>(Type type, T value)
+        public void Add(Type type, object value)
         {
             innerDictionary[type] = value;
         }
@@ -29,8 +28,7 @@ namespace AutomatedTestSystem
 
         public object Get(Type type)
         {
-            object retrievedValue = innerDictionary[type];
-            object result = Convert.ChangeType(retrievedValue, type);
+            object result = innerDictionary[type];
             return result;
         }
 

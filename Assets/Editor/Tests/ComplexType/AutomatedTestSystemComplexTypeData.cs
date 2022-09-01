@@ -6,11 +6,11 @@ namespace AutomatedTestSystemTests
 {
     public class AutomatedTestSystemComplexTypeData
     {
-        public static TestCaseData[] Testing()
+        public static IEnumerable<TestCaseData> Testing()
         {
-            var array = AutomatedTest.Populate<int[]>();
-            var list = AutomatedTest.Populate<List<int>>();
-            var dictionary = AutomatedTest.Populate<Dictionary<int, int>>();
+            var array = AutomatedTest.Populate(typeof(int[]));
+            var list = AutomatedTest.Populate(typeof(List<int[]>));
+            var dictionary = AutomatedTest.Populate(typeof(Dictionary<int[], int[]>));
             return new[]
             {
                 new TestCaseData()

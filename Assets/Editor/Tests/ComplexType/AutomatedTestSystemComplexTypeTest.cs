@@ -7,7 +7,7 @@ namespace AutomatedTestSystemTests
         [TestCaseSource(nameof(Testing))]
         public void Get()
         {
-            Assert.IsTrue(true);
+            Assert.IsTrue(false);
         }
     }
 }

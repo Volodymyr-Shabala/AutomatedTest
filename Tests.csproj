@@ -54,6 +54,9 @@
      <Compile Include="Assets\Editor\Tests\ComplexType\AutomatedTestSystemComplexTypeTest.cs" />
      <Compile Include="Assets\Editor\Tests\SimpleType\AutomatedTestSystemSimpleTypeData.cs" />
      <Compile Include="Assets\Editor\Tests\SimpleType\AutomatedTestSystemSimpleTypeTest.cs" />
+     <Compile Include="Assets\Editor\Tests\TestClass.cs" />
+     <Compile Include="Assets\Editor\Tests\TestEnum.cs" />
+     <Compile Include="Assets\Editor\Tests\TestStruct.cs" />
      <Compile Include="Assets\Editor\Tests\TypeExtensionsTest\TypeExtensionData.cs" />
      <Compile Include="Assets\Editor\Tests\TypeExtensionsTest\TypeExtensionTest.cs" />
  <Reference Include="UnityEngine.TestRunner">

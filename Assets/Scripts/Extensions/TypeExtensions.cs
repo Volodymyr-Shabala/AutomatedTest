@@ -29,10 +29,17 @@ namespace AutomatedTestSystemTests
             // V: Nullables are not simple type. Have to check if they are nullable, then get underlying type and check it if it is simple.
             if (IsNullable(type))
             {
-                return HandleNullable(type);
+                result = HandleNullable(type);
+                return result;
             }
 
             return false;
+        }
+
+        public static bool IsClass(this Type type)
+        {
+            bool result = Convert.GetTypeCode(type) == TypeCode.Object;
+            return result;
         }
 
         private static bool HandleNullable(Type type)
@@ -71,14 +78,14 @@ namespace AutomatedTestSystemTests
         
         public static Type GetSimpleTypeFromCollection(this Type type)
         {
-            if (type.IsCollection())
-            {
+            // if (type.IsCollection())
+            // {
                 Type elementType = type.GetElementType();
                 if (elementType.IsSimpleType())
                 {
                     return elementType;
                 }
-            }
+            // }
 
             return type;
         }

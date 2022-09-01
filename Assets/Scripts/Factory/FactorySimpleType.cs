@@ -5,7 +5,8 @@ namespace AutomatedTestSystem
     /*Skipped types:
      * Guid
      */
-    public class FactorySimpleType : FactoryData
+    // V: Not used anymore
+    public class FactorySimpleType
     {
         public static readonly sbyte[] SByteValues =
         {

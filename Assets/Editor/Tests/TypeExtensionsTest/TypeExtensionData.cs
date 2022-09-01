@@ -1,189 +1,75 @@
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using AutomatedTestSystem;
 using NUnit.Framework;
-using Type = System.Type;
 
 namespace AutomatedTestSystemTests
 {
     public class TypeExtensionData
     {
-        public static TestCaseData[] IsSimpleTypeTestData()
-        {
-            List<TestCaseData> data = new List<TestCaseData>();
-            Predicate<Type> validator = x => x.IsSimpleType();
-            FieldInfo[] fieldInfos = typeof(FactorySimpleType).GetFields();
-            foreach (FieldInfo fieldInfo in fieldInfos)
-            {
-                Type type = fieldInfo.FieldType;
-                Type nullableType;
-                Type simpleType = type;
-                if (type.IsCollection())
-                {
-                    Type elementType = type.GetElementType();
-                    if (elementType == typeof(string))
-                    {
-                        continue;
-                    }
-
-                    nullableType = elementType.GetNullableType();
-                    if (elementType.IsSimpleType())
-                    {
-                        simpleType = elementType;
-                    }
-                }
-                else
-                {
-                    if (type == typeof(string))
-                    {
-                        continue;
-                    }
-
-                    nullableType = type.GetNullableType();
-                    if (type.IsSimpleType())
-                    {
-                        simpleType = type;
-                    }
-                }
-
-                data.Add(new TestCaseData(nullableType, validator));
-                data.Add(new TestCaseData(simpleType, validator));
-            }
-            
-            Predicate<Type> reverseValidator = x => validator(x) == false;
-            data.Add(new TestCaseData(typeof(TestEnum), reverseValidator));
-            data.Add(new TestCaseData(typeof(TestStruct), reverseValidator));
-            data.Add(new TestCaseData(typeof(TestClass), reverseValidator));
-            data.Add(new TestCaseData(typeof(TestEnum?), reverseValidator));
-            data.Add(new TestCaseData(typeof(TestStruct?), reverseValidator));
-
-            TestCaseData[] result = data.ToArray();
-            return result;
-        }
-
-        public static TestCaseData[] IsNullableTestData()
+        public static IEnumerable<TestCaseData> IsNullableTestData()
         {
             List<TestCaseData> data = new List<TestCaseData>();
             Predicate<Type> validator = x => x.IsNullable();
-            FieldInfo[] fieldInfos = typeof(FactorySimpleType).GetFields();
-            foreach (FieldInfo fieldInfo in fieldInfos)
+            FactoryData factoryData = new FactoryData();
+            IEnumerable<Type> allTypes = factoryData.GetAllImplementedTypes();
+            foreach (Type type in allTypes)
             {
-                Type type = fieldInfo.FieldType;
-                Type nullableType;
-                if (type.IsCollection())
+                if (type == typeof(string))
                 {
-                    Type elementType = type.GetElementType();
-                    if (elementType == typeof(string))
-                    {
-                        continue;
-                    }
-
-                    nullableType = elementType.GetNullableType();
-                }
-                else
-                {
-                    if (type == typeof(string))
-                    {
-                        continue;
-                    }
-
-                    nullableType = type.GetNullableType();
+                    continue;
                 }
 
-                data.Add(new TestCaseData(nullableType, validator));
+                Type nullableType = type.GetNullableType();
+                data.Add(new TestCaseData(nullableType, validator).SetDescription("Checking against nullable type"));
             }
-
-            TestCaseData[] result = data.ToArray();
-            return result;
+            
+            Predicate<Type> reverseValidator = x => x.IsNullable() == false;
+            data.Add(new TestCaseData(typeof(int), reverseValidator).SetDescription("Checking against incorrect type"));
+            return data;
         }
 
-        public static TestCaseData[] GetNullableTypeData()
+        public static IEnumerable<TestCaseData> IsCollectionTestData()
         {
             List<TestCaseData> data = new List<TestCaseData>();
-            Predicate<Type> validator = x => Nullable.GetUnderlyingType(x) != null;
-            FieldInfo[] fieldInfos = typeof(FactorySimpleType).GetFields();
-            foreach (FieldInfo fieldInfo in fieldInfos)
+            Predicate<Type> validator = x => x.IsCollection() == false;
+            FactoryData factoryData = new FactoryData();
+            IEnumerable<Type> allTypes = factoryData.GetAllImplementedTypes();
+            foreach (Type type in allTypes)
             {
-                Type type = fieldInfo.FieldType;
-                Type nullableType;
-                if (type.IsCollection())
-                {
-                    Type elementType = type.GetElementType();
-                    if (elementType == typeof(string))
-                    {
-                        continue;
-                    }
-
-                    nullableType = elementType.GetNullableType();
-                }
-                else
-                {
-                    if (type == typeof(string))
-                    {
-                        continue;
-                    }
-
-                    nullableType = type.GetNullableType();
-                }
-
-                data.Add(new TestCaseData(nullableType, validator));
+                data.Add(new TestCaseData(type, validator).SetDescription("Checking against non collection data"));
             }
 
-            TestCaseData[] result = data.ToArray();
-            return result;
-        }
-        
-        public static TestCaseData[] IsCollectionData()
-        {
-            List<TestCaseData> data = new List<TestCaseData>();
-            Predicate<Type> validator = x => x.IsCollection();
-            FieldInfo[] fieldInfos = typeof(FactorySimpleType).GetFields();
-            foreach (FieldInfo fieldInfo in fieldInfos)
-            {
-                Type type = fieldInfo.FieldType;
-                data.Add(new TestCaseData(type, validator));
-            }
+            Predicate<Type> reverseValidator = x => x.IsCollection();
+            data.Add(new TestCaseData(typeof(int[]), reverseValidator).SetDescription("Checking against collection data"));
+            data.Add(new TestCaseData(typeof(string[]), reverseValidator).SetDescription("Checking against collection data"));
 
-            Predicate<Type> reverseValidator = x => validator(x) == false;
-            data.Add(new TestCaseData(typeof(int), reverseValidator));
-            data.Add(new TestCaseData(typeof(string), reverseValidator));
-
-            TestCaseData[] result = data.ToArray();
-            return result;
+            return data;
         }
 
-        public static TestCaseData[] GetSimpleTypeFromCollectionData()
+        public static IEnumerable<TestCaseData> IsSimpleTypeTestData()
         {
             List<TestCaseData> data = new List<TestCaseData>();
             Predicate<Type> validator = x => x.IsSimpleType();
-            FieldInfo[] fieldInfos = typeof(FactorySimpleType).GetFields();
-            foreach (FieldInfo fieldInfo in fieldInfos)
+            FactoryData factoryData = new FactoryData();
+            IEnumerable<Type> allTypes = factoryData.GetAllImplementedTypes();
+            foreach (Type type in allTypes)
             {
-                Type type = fieldInfo.FieldType;
-                Type simpleType = type.GetSimpleTypeFromCollection();
-                data.Add(new TestCaseData(simpleType, validator));
+                data.Add(new TestCaseData(type, validator).SetDescription("Checking against simple type"));
             }
 
             Predicate<Type> reverseValidator = x => validator(x) == false;
-            data.Add(new TestCaseData(typeof(int[]), reverseValidator));
-            data.Add(new TestCaseData(typeof(string[]), reverseValidator));
+            Type[] incorrectTypes = {
+                typeof(int[]), typeof(string[]), typeof(TestEnum), typeof(TestStruct), typeof(TestClass),
+                typeof(TestEnum?), typeof(TestStruct?)
+            };
 
-            TestCaseData[] result = data.ToArray();
-            return result;
+            foreach (Type incorrectType in incorrectTypes)
+            {
+                data.Add(new TestCaseData(incorrectType, reverseValidator).SetDescription("Checking against collection type"));
+            }
+
+            return data;
         }
     }
-
-    struct TestStruct
-    {
-        public int testValue;
-    }
-
-    class TestClass
-    {
-        public string Prop1;
-        public int Prop2;
-    }
-
-    enum TestEnum { TheValue }
 }

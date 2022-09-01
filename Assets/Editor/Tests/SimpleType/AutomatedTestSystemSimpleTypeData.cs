@@ -7,130 +7,48 @@ namespace AutomatedTestSystemTests
 {
     public class AutomatedTestSystemSimpleTypeData
     {
-        public static TestCaseData[] AllTypesData()
+        public static IEnumerable<TestCaseData> SimpleClassTestData()
         {
             List<TestCaseData> data = new List<TestCaseData>();
-            FactorySimpleType factory = new FactorySimpleType();
-            IEnumerable<Type> allTypes = factory.GetAllImplementedTypes();
-            foreach (Type type in allTypes)
-            {
-                TestCaseData[] value = Generic(type, factory);
-                data.AddRange(value);
-            }
-
-            TestCaseData[] result = data.ToArray();
-            return result;
-        }
-
-        private static TestCaseData[] Generic(Type type, FactoryData factory)
-        {
-            if (factory.IsTypeImplemented(type))
-            {
-                Type[] values = factory.GetValue<Type>(type);
-                return GenericData(values);
-            }
-
-            return new[] { new TestCaseData() };
+            object result = AutomatedTest.Populate(typeof(TestClass));
+            Predicate<object> validator = x => x != null;
+            data.Add(new TestCaseData(result, validator));
+            return data;
         }
         
-        private static TestCaseData[] GenericData<T>(IReadOnlyList<T> testValues)
+        public static IEnumerable<TestCaseData> PopulateSimpleTypeTestData()
         {
-            IList<T> values = AutomatedTest.Populate<T>();
-            int length = values.Count;
-            TestCaseData[] testCaseData = new TestCaseData[length];
-            for (int i = 0; i < length; i++)
+            List<TestCaseData> data = new List<TestCaseData>();
+            FactoryData factoryData = new FactoryData();
+            IEnumerable<Type> allTypes = factoryData.GetAllImplementedTypes();
+            foreach (Type type in allTypes)
             {
-                T valueToTestAgainst = testValues[i];
-                testCaseData[i] = new TestCaseData(values[i], new Predicate<T>(
-                                    x => EqualityComparer<T>.Default.Equals(x, valueToTestAgainst)));
+                object result = AutomatedTest.Populate(type);
+                Predicate<object> validator = x => x.GetType() == type.MakeArrayType();
+                data.Add(new TestCaseData(result, validator).SetDescription("Checking against correct type"));
             }
 
-            return testCaseData;
+            return data;
         }
 
-        public static TestCaseData[] SByteData()
+        public static IEnumerable<TestCaseData> CreateObjectTestData()
         {
-            return GenericData(FactorySimpleType.SByteValues);
-        }
+            List<TestCaseData> data = new List<TestCaseData>();
+            FactoryData factoryData = new FactoryData();
+            IEnumerable<Type> allTypes = factoryData.GetAllImplementedTypes();
+            foreach (Type type in allTypes)
+            {
+                object result = AutomatedTest.CreateObject(type);
+                Predicate<object> validator = x => x.GetType() == result.GetType();
+                data.Add(new TestCaseData(result, validator).SetDescription("Checking against correct type"));
+            }
 
-        public static TestCaseData[] ByteData()
-        {
-            return GenericData(FactorySimpleType.ByteValues);
-        }
+            const int firstValue = 0;
+            const byte secondValue = 0;
+            Predicate<object> reversedValidator = x => x.GetType() != secondValue.GetType();
+            data.Add(new TestCaseData(firstValue, reversedValidator).SetDescription("Checking against incorrect type"));
 
-        public static TestCaseData[] ShortData()
-        {
-            return GenericData(FactorySimpleType.ShortValues);
-        }
-
-        public static TestCaseData[] UShortData()
-        {
-            return GenericData(FactorySimpleType.UShortValues);
-        }
-
-        public static TestCaseData[] IntData()
-        {
-            return GenericData(FactorySimpleType.IntValues);
-        }
-
-        public static TestCaseData[] UIntData()
-        {
-            return GenericData(FactorySimpleType.UIntValues);
-        }
-
-        public static TestCaseData[] FloatData()
-        {
-            return GenericData(FactorySimpleType.FloatValues);
-        }
-
-        public static TestCaseData[] LongData()
-        {
-            return GenericData(FactorySimpleType.LongValues);
-        }
-
-        public static TestCaseData[] ULongData()
-        {
-            return GenericData(FactorySimpleType.ULongValues);
-        }
-
-        public static TestCaseData[] DoubleData()
-        {
-            return GenericData(FactorySimpleType.DoubleValues);
-        }
-
-        public static TestCaseData[] DecimalData()
-        {
-            return GenericData(FactorySimpleType.DecimalValues);
-        }
-
-        public static TestCaseData[] StringData()
-        {
-            return GenericData(FactorySimpleType.StringValues);
-        }
-
-        public static TestCaseData[] CharData()
-        {
-            return GenericData(FactorySimpleType.CharValues);
-        }
-
-        public static TestCaseData[] BoolData()
-        {
-            return GenericData(FactorySimpleType.BoolValues);
-        }
-
-        public static TestCaseData[] DateTimeData()
-        {
-            return GenericData(FactorySimpleType.DateTimeValues);
-        }
-
-        public static TestCaseData[] DateTimeOffsetData()
-        {
-            return GenericData(FactorySimpleType.DateTimeOffsetValues);
-        }
-
-        public static TestCaseData[] TimeSpanData()
-        {
-            return GenericData(FactorySimpleType.TimeSpanValues);
+            return data;
         }
     }
 }
