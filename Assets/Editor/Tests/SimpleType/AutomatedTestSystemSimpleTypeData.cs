@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using AutomatedTestSystem;
 using NUnit.Framework;
@@ -10,9 +11,15 @@ namespace AutomatedTestSystemTests
         public static IEnumerable<TestCaseData> SimpleClassTestData()
         {
             List<TestCaseData> data = new List<TestCaseData>();
-            object result = AutomatedTest.Populate(typeof(TestClass));
+            Type type = typeof(TestClass);
+            object result = AutomatedTest.Populate(type);
             Predicate<object> validator = x => x != null;
-            data.Add(new TestCaseData(result, validator));
+            IEnumerable array = result as IEnumerable;
+            foreach (object element in array)
+            {
+                data.Add(new TestCaseData(element, validator).SetDescription("Checking for not null"));
+            }
+            
             return data;
         }
         

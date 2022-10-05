@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using AutomatedTestSystemTests;
+using UnityEngine;
 
 namespace AutomatedTestSystem
 {
@@ -51,21 +55,49 @@ namespace AutomatedTestSystem
         
         private static object PopulateClass(Type type)
         {
-            object result = CreateObject(type);
             FieldInfo[] fieldInfos = type.GetFields();
-            foreach (FieldInfo fieldInfo in fieldInfos)
+            int length = fieldInfos.Length;
+            List<object[]> values = new List<object[]>(length);
+            for (int i = 0; i < length; i++)
             {
-                object field = Populate(fieldInfo.FieldType);
-                fieldInfo.SetValue(result, field);
+                object fieldValues = Populate(fieldInfos[i].FieldType);
+                object[] fieldValueIEnumerable = (fieldValues as IEnumerable).Cast<object>().ToArray();
+                values.Add(fieldValueIEnumerable);
             }
 
-            return result;
+            // TODO V: Put into Utils class/function
+            int biggestLength = values[0].Length;
+            for (int i = 0; i < length - 1; i++)
+            {
+                int nextArrayLength = values[i + 1].Length;
+                biggestLength = Mathf.Max(biggestLength, nextArrayLength);
+            }
+            
+            object[] classArray = new object[biggestLength];
+            for (int i = 0; i < biggestLength; i++)
+            {
+                object classValue = CreateObject(type);
+                for (int j = 0; j < length; j++)
+                {
+                    object[] array = values[j];
+                    object value = array.Length > i ? array[i] : null;
+                    fieldInfos[j].SetValue(classValue, value);
+                }
+
+                classArray[i] = classValue;
+            }
+
+            return classArray;
         }
         
+        /// <summary>
+        /// Returns an array with elements of provided type
+        /// </summary>
+        /// <param name="type"></param> Type of the array to be returned
+        /// <returns> Returns an array with elements of provided type </returns>
         private static object GetPopulatedArrayOfSimpleType(Type type)
         {
             FactoryData factoryData = new FactoryData();
-            // TODO V: This one returns array of the type, but I need only a simple type. Need to think about how to handle it
             if (factoryData.IsTypeImplemented(type))
             {
                 object foundType = factoryData.GetValue(type);
